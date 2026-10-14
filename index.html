@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDEN Grammar Lab · 중3 Lesson 7</title>
+<style>
+:root{
+  --bg:#f5f3ee; --card:#ffffff; --ink:#18202f; --sub:#5b6374; --mute:#8d93a0;
+  --line:#e3e0d8; --line2:#efede7;
+  --navy:#16213a; --navy2:#24345a; --accent:#2b59c3; --accent-d:#1e429a; --accent-soft:#e9eefb;
+  --gold:#c49a3c; --gold-soft:#f7efdc;
+  --ok:#1d8656; --ok-soft:#e6f4ec; --no:#c4413a; --no-soft:#fbeceb;
+  --font:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg)}
+body{font-family:var(--font);color:var(--ink);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased;letter-spacing:-.2px}
+button,input{font-family:var(--font);font-size:inherit;color:inherit;letter-spacing:inherit}
+button{cursor:pointer;border:none;background:none}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px 56px}
+.hidden{display:none!important}
+
+/* header */
+.hdr{position:sticky;top:0;z-index:20;background:rgba(245,243,238,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:860px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.mark{width:30px;height:30px;border-radius:8px;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px}
+.brand b{font-size:15px;font-weight:800;letter-spacing:-.3px}
+.brand span{font-size:12px;color:var(--mute);display:block;line-height:1.2}
+.hdr-actions{display:flex;gap:6px}
+.lnk{padding:7px 12px;border-radius:8px;font-size:13px;color:var(--sub);font-weight:700}
+.lnk:hover{background:#ebe8e1;color:var(--ink)}
+
+/* buttons */
+.btn{padding:12px 20px;border-radius:10px;font-weight:700;font-size:15px;transition:background .15s,transform .08s}
+.btn:active{transform:scale(.98)}
+.btn-pri{background:var(--navy);color:#fff}
+.btn-pri:hover{background:var(--navy2)}
+.btn-sec{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.btn-sec:hover{border-color:#cfcbc1}
+.btn[disabled]{opacity:.4;cursor:default}
+
+/* hero */
+.hero{margin-top:20px;background:var(--navy);color:#f4f1ea;border-radius:18px;padding:28px 26px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;border:1px solid rgba(255,255,255,.08);box-shadow:0 0 0 30px rgba(255,255,255,.025),0 0 0 60px rgba(255,255,255,.02)}
+.eyebrow{font-size:12px;letter-spacing:.5px;color:#a9b4cc;font-weight:700}
+.hero h1{font-size:28px;font-weight:800;letter-spacing:-.8px;margin:6px 0 12px;line-height:1.3}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;padding:5px 10px;border-radius:99px;border:1px solid rgba(255,255,255,.18);color:#dfe5f2}
+.chip.on{background:var(--gold);border-color:var(--gold);color:#1b1b1b;font-weight:700}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:14px}
+.kpi{background:#fff;padding:14px 16px}
+.kpi .k{font-size:12px;color:var(--mute);font-weight:700}
+.kpi .v{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-top:2px}
+.kpi .v small{font-size:13px;color:var(--mute);font-weight:700;margin-left:2px}
+
+/* stage list */
+.sec-title{font-size:13px;color:var(--mute);font-weight:800;margin:26px 2px 10px;letter-spacing:.3px}
+.stages{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.st{width:100%;display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:12px;padding:16px 18px;text-align:left;border-bottom:1px solid var(--line2);transition:background .12s}
+.st:last-child{border-bottom:none}
+.st:hover{background:#faf9f6}
+.st .no{font-size:22px;font-weight:800;color:#c9c5bb;letter-spacing:-.5px}
+.st.done .no{color:var(--accent)}
+.st h3{font-size:16px;font-weight:800;letter-spacing:-.3px}
+.st p{font-size:13px;color:var(--sub);line-height:1.5;margin-top:1px}
+.st .rt{text-align:right;min-width:82px}
+.st .pct{font-size:13px;font-weight:800;color:var(--ink)}
+.st .pct.none{color:var(--mute);font-weight:700}
+.mbar{height:4px;background:var(--line2);border-radius:99px;overflow:hidden;margin-top:6px;width:82px;margin-left:auto}
+.mbar div{height:100%;background:var(--accent);border-radius:99px}
+.wrong-row{margin-top:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px}
+.wrong-row b{font-size:15px}
+.wrong-row span{font-size:13px;color:var(--sub);display:block}
+
+/* page */
+.phead{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:24px 0 14px;flex-wrap:wrap}
+.phead .eyebrow{color:var(--mute)}
+.phead h2{font-size:22px;font-weight:800;letter-spacing:-.6px;line-height:1.3}
+.stats{display:flex;gap:6px;flex-wrap:wrap}
+.stat{font-size:12px;font-weight:700;padding:6px 10px;border-radius:8px;background:#fff;border:1px solid var(--line);color:var(--sub)}
+.stat b{color:var(--ink)}
+.track{height:3px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:16px}
+.track div{height:100%;background:var(--accent);transition:width .3s}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px}
+.qno{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:var(--accent)}
+.tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:var(--line2);color:var(--sub)}
+.tag.gold{background:var(--gold-soft);color:#8a6a1f}
+.qtext{font-size:17px;font-weight:700;line-height:1.6;margin:10px 0 14px;white-space:pre-line;letter-spacing:-.3px}
+.qbox{background:#faf9f6;border:1px solid var(--line);border-left:3px solid var(--navy);border-radius:10px;padding:14px 16px;font-size:15px;line-height:1.8;margin-bottom:16px;white-space:pre-line}
+.qbox u,.opt u{text-decoration-thickness:2px;text-underline-offset:3px;text-decoration-color:var(--accent)}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;gap:10px;text-align:left;padding:13px 15px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:15px;line-height:1.55;white-space:pre-line;transition:border-color .12s,background .12s}
+.opt:hover:not([disabled]){border-color:#bfc8dc;background:#fbfcfe}
+.opt .m{font-weight:800;color:var(--mute);min-width:16px}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.opt.sel .m{color:var(--accent)}
+.opt.correct{border-color:var(--ok);background:var(--ok-soft)}
+.opt.correct .m{color:var(--ok)}
+.opt.wrong{border-color:var(--no);background:var(--no-soft)}
+.opt.wrong .m{color:var(--no)}
+.fld{margin-bottom:12px}
+.fld label{display:block;font-size:12px;font-weight:800;color:var(--sub);margin-bottom:5px}
+.fld .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fld .row .fix{font-size:15px;color:var(--sub)}
+.fld input{flex:1;min-width:0;width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:16px;background:#fff;outline:none;transition:border-color .12s}
+.fld input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.fld input.ok{border-color:var(--ok);background:var(--ok-soft)}
+.fld input.no{border-color:var(--no);background:var(--no-soft)}
+.fld input.self{border-color:var(--gold);background:var(--gold-soft)}
+.hintline{font-size:12px;color:var(--mute);margin-top:4px}
+.fb{margin-top:16px;border-radius:12px;padding:15px 16px;font-size:14px;line-height:1.75;border:1px solid}
+.fb.good{background:var(--ok-soft);border-color:#bfe3cf}
+.fb.bad{background:var(--no-soft);border-color:#f0c9c6}
+.fb .h{font-weight:800;font-size:15px;margin-bottom:3px}
+.fb.good .h{color:var(--ok)} .fb.bad .h{color:var(--no)}
+.fb .a{font-weight:800}
+.fb .exp{color:var(--sub);margin-top:4px}
+.fb .self{margin-top:6px;padding-top:6px;border-top:1px dashed rgba(0,0,0,.12)}
+.acts{display:flex;justify-content:space-between;gap:8px;margin-top:18px;flex-wrap:wrap}
+.acts .r{display:flex;gap:8px;margin-left:auto}
+.hintbox{margin-top:12px;background:var(--accent-soft);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.75;color:#24345a}
+
+/* concept */
+.cpt h3{font-size:21px;font-weight:800;letter-spacing:-.6px;margin:8px 0 12px}
+.cpt p{margin-bottom:10px}
+.cpt h4{font-size:14px;font-weight:800;margin:14px 0 6px}
+.ex{background:#faf9f6;border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:8px 0 12px;font-size:14.5px;line-height:1.85}
+.ex .lbl{display:inline-block;font-size:11px;font-weight:800;padding:2px 7px;border-radius:5px;background:var(--line2);color:var(--sub);margin-right:6px;vertical-align:1px}
+.ex .lbl.acc{background:var(--navy);color:#fff}
+.ex s{color:var(--mute)}
+.ok-t{color:var(--ok);font-weight:800}.no-t{color:var(--no);font-weight:800}
+.hl{color:var(--accent);font-weight:800}
+.note{font-size:14px;color:var(--sub);background:var(--gold-soft);border-radius:10px;padding:10px 13px}
+.steps{list-style:none;counter-reset:s;margin:6px 0 12px}
+.steps li{counter-increment:s;position:relative;padding:10px 12px 10px 46px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:#fff}
+.steps li:before{content:counter(s);position:absolute;left:12px;top:10px;width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center}
+.steps li b{display:block;font-size:14.5px}
+.steps li span{font-size:13px;color:var(--sub)}
+.tw{overflow-x:auto;margin:6px 0 12px;border:1px solid var(--line);border-radius:10px}
+table.t{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px}
+table.t th{background:#f3f1ec;text-align:left;font-weight:800;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.t td{padding:9px 10px;border-bottom:1px solid var(--line2);vertical-align:top;line-height:1.6}
+table.t tr:last-child td{border-bottom:none}
+table.t td:first-child{font-weight:800;white-space:nowrap}
+.chk{margin-top:16px;border-top:1px solid var(--line2);padding-top:14px}
+.chk .q{font-size:14px;font-weight:800;margin-bottom:8px}
+.chk .q:before{content:"CHECK";font-size:10px;font-weight:800;color:#fff;background:var(--accent);padding:2px 6px;border-radius:4px;margin-right:8px;vertical-align:2px}
+.chk .row{display:flex;gap:6px;flex-wrap:wrap}
+.chk button{padding:8px 13px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-weight:700;background:#fff}
+.chk button.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.chk button.no{border-color:var(--no);background:var(--no-soft);color:var(--no)}
+.chk .msg{font-size:13px;margin-top:6px;color:var(--sub)}
+.dots{display:flex;gap:4px;justify-content:center;margin:16px 0 0}
+.dots span{width:6px;height:6px;border-radius:99px;background:#d6d2c8;transition:width .2s}
+.dots span.on{width:20px;background:var(--navy)}
+
+/* -ing / as choosers */
+.sent{font-size:20px;line-height:1.7;text-align:center;padding:26px 8px 22px;letter-spacing:-.3px}
+.sent mark{background:none;color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);padding:0 1px}
+.choices{display:grid;gap:8px}
+.choices.c3{grid-template-columns:repeat(3,1fr)}
+.choices.c5{grid-template-columns:repeat(5,1fr)}
+.ch{padding:14px 6px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:800;font-size:15px;transition:border-color .12s,background .12s}
+.ch small{display:block;font-size:11px;font-weight:600;color:var(--mute);margin-top:2px}
+.ch:hover:not([disabled]){border-color:var(--navy)}
+.ch.correct{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.ch.wrong{border-color:var(--no);background:var(--no-soft);color:var(--no)}
+.ch[disabled]{cursor:default}
+
+/* speed */
+.speed-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.timebar{flex:1;height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+.timebar div{height:100%;background:var(--navy);transition:width 1s linear}
+.timebar.warn div{background:var(--no)}
+.tnum{font-weight:800;font-size:15px;min-width:38px;text-align:right}
+.speed-card{position:relative}
+.flash-ok{animation:fok .35s}.flash-no{animation:fno .35s}
+@keyframes fok{0%{box-shadow:0 0 0 0 rgba(29,134,86,.45)}100%{box-shadow:0 0 0 14px rgba(29,134,86,0)}}
+@keyframes fno{0%{box-shadow:0 0 0 0 rgba(196,65,58,.45)}100%{box-shadow:0 0 0 14px rgba(196,65,58,0)}}
+.last{min-height:22px;text-align:center;font-size:13px;margin-top:12px;color:var(--sub)}
+.review{margin-top:14px;border-top:1px solid var(--line2)}
+.review div{padding:10px 0;border-bottom:1px solid var(--line2);font-size:14px}
+.review div span{display:inline-block;font-size:12px;font-weight:800;color:var(--ok);margin-left:6px}
+
+/* blocks */
+.zone{min-height:62px;border:1px dashed #c8c3b7;border-radius:12px;padding:10px;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;margin-bottom:14px;background:#fcfbf9}
+.zone .ph{color:var(--mute);font-size:13px;padding:8px 4px}
+.pool{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.blk{padding:9px 13px;border-radius:9px;border:1px solid var(--line);background:#fff;font-weight:700;font-size:15px;box-shadow:0 1px 0 var(--line)}
+.blk:hover{border-color:var(--navy)}
+.blk.used{visibility:hidden}
+.zone .blk{background:var(--navy);border-color:var(--navy);color:#fff}
+
+/* exam */
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.filters button{padding:7px 12px;border-radius:8px;font-size:13px;font-weight:700;background:#fff;border:1px solid var(--line);color:var(--sub)}
+.filters button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(15,1fr);gap:4px;margin-bottom:14px}
+.grid button{height:32px;border-radius:6px;font-size:11px;font-weight:800;background:#fff;border:1px solid var(--line);color:var(--mute)}
+.grid button.ok{background:var(--ok-soft);border-color:#a9d8bf;color:var(--ok)}
+.grid button.no{background:var(--no-soft);border-color:#ecbbb7;color:var(--no)}
+.grid button.cur{outline:2px solid var(--navy);outline-offset:1px;color:var(--ink)}
+
+/* result */
+.res{text-align:center;padding:36px 22px}
+.res .big{font-size:56px;font-weight:800;letter-spacing:-2px;line-height:1}
+.res .big small{font-size:20px;color:var(--mute);letter-spacing:0}
+.res h3{font-size:19px;font-weight:800;margin:12px 0 4px}
+.res p{color:var(--sub);font-size:14px}
+.res .acts{justify-content:center}
+.pill{display:inline-block;font-size:12px;font-weight:800;padding:4px 10px;border-radius:99px;background:var(--gold-soft);color:#8a6a1f;margin-top:10px}
+
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:700;z-index:60;animation:tin .2s}
+@keyframes tin{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+.streak{position:fixed;right:16px;top:70px;background:var(--gold);color:#1b1b1b;font-weight:800;font-size:13px;padding:6px 12px;border-radius:99px;z-index:60;animation:tin .2s}
+
+@media (max-width:600px){
+  .hero{padding:22px 18px}
+  .hero h1{font-size:23px}
+  .kpi{padding:12px}
+  .kpi .v{font-size:20px}
+  .card{padding:18px 16px}
+  .qtext{font-size:16px}
+  .sent{font-size:17px;padding:18px 2px}
+  .choices.c5{grid-template-columns:repeat(3,1fr)}
+  .grid{grid-template-columns:repeat(10,1fr)}
+  .st{grid-template-columns:38px 1fr auto;padding:14px}
+  .st .no{font-size:18px}
+  .st .rt{min-width:64px}.mbar{width:64px}
+  .brand span{display:none}
+}
+</style>
+</head>
+<body>
+<header class="hdr"><div class="hdr-in">
+  <div class="brand" onclick="home()"><div class="mark">E</div><div><b>EDEN Grammar Lab</b><span>중3 · Lesson 7 · Technology in Our Lives</span></div></div>
+  <div class="hdr-actions"><button class="lnk" onclick="home()">홈</button><button class="lnk" onclick="resetAll()">기록 초기화</button></div>
+</div></header>
+<main class="wrap" id="app"></main>
+
+<script>
+/* =========================================================
+   저장 (이 기기에만 저장)
+   ========================================================= */
+const KEY='edenM3L7';
+const store={
+  get(k,d){try{const v=localStorage.getItem(KEY+'_'+k);return v?JSON.parse(v):d;}catch(e){return d;}},
+  set(k,v){try{localStorage.setItem(KEY+'_'+k,JSON.stringify(v));}catch(e){}}
+};
+let prog=store.get('prog',{best:{},exam:{},wrong:[]});
+const save=()=>store.set('prog',prog);
+
+/* =========================================================
+   01 개념 노트
+   ========================================================= */
+const CONCEPTS=[
+{tag:'분사구문 · 개념',title:'분사구문이란?',body:`
+<p>시간·이유·조건·양보·동시동작을 나타내는 <b>부사절(접속사 + 주어 + 동사)</b>에서 접속사와 주어를 빼고, 동사를 <b>분사(동사원형 + -ing)</b>로 바꿔 짧게 줄인 구문입니다.</p>
+<div class="ex"><span class="lbl">부사절</span>As experts use various methods, they analyze big data.<br><span class="lbl acc">분사구문</span><b class="hl">Using various methods</b>, experts analyze big data.</div>
+<p class="note">왜 쓸까? 같은 주어가 반복되거나 문장이 길어질 때, 더 간결하고 세련되게 전달하기 위해 씁니다.</p>`,
+check:{q:'분사구문은 원래 어떤 절을 줄인 것일까?',o:['명사절','형용사절','부사절'],a:2}},
+
+{tag:'분사구문 · 공식',title:'부사절 → 분사구문 3단계',body:`
+<ol class="steps">
+<li><b>접속사 생략</b><span>의미를 분명히 하고 싶으면 남겨 두기도 합니다. (While walking…)</span></li>
+<li><b>주어 확인 후 생략</b><span>주절의 주어와 같을 때만 생략합니다. 다르면 분사 앞에 그대로 둡니다.</span></li>
+<li><b>동사 → 동사원형 + -ing</b><span>시제가 같으면 -ing로 바꿉니다. 수동태(being + p.p.)는 being을 주로 생략합니다.</span></li></ol>
+<div class="ex">While she ate a sandwich, she waited for the train.<br>→ <s>While</s> <s>she</s> ate → <b class="hl">Eating a sandwich</b>, she waited for the train.</div>`,
+check:{q:'Because Tom was tired, he stayed home. → ___ tired, Tom stayed home.',o:['Be','Being','Was'],a:1}},
+
+{tag:'분사구문 · 의미',title:'문맥으로 읽는 5가지 의미',body:`
+<div class="tw"><table class="t"><tr><th>의미</th><th>해석</th><th>원래 접속사</th><th>예문</th></tr>
+<tr><td>동시동작</td><td>~하면서, ~한 채로</td><td>while, as</td><td>Eating a sandwich, she waited for the train.</td></tr>
+<tr><td>연속동작</td><td>그리고 ~하다</td><td>and</td><td>Big data is improving players' performance, making sports more exciting.</td></tr>
+<tr><td>시간</td><td>~할 때, ~한 후에</td><td>when, while, after</td><td>Walking along the street, I saw a man with five dogs.</td></tr>
+<tr><td>이유</td><td>~ 때문에</td><td>because, as, since</td><td>Being tired, Tom stayed at home all day.</td></tr>
+<tr><td>조건 / 양보</td><td>~한다면 / ~이지만</td><td>if / although</td><td>Turning to the left, you will see the post office.</td></tr></table></div>`,
+check:{q:'Feeling sick, she went to see a doctor. 의 의미는?',o:['동시동작','이유','조건'],a:1}},
+
+{tag:'분사구문 · 시험 포인트',title:'부정어 위치와 주어 일치',body:`
+<h4>① 부정어 Not / Never는 분사 바로 앞</h4>
+<div class="ex">As I did not know what to buy, I asked Mom.<br>→ <b class="hl">Not knowing</b> what to buy, I asked Mom. <span class="ok-t">O</span><br>→ Knowing not what to buy, I asked Mom. <span class="no-t">X</span></div>
+<h4>② 분사구문의 행위자 = 주절의 주어</h4>
+<div class="ex">Walking in the grass, a snake bit her. <span class="no-t">X</span> (뱀이 잔디를 걸은 셈)<br>Walking in the grass, she was bitten by a snake. <span class="ok-t">O</span></div>`,
+check:{q:"As he did not have money → ___ money, he couldn't buy it.",o:['Having not','Not having','Not had'],a:1}},
+
+{tag:'분사구문 · 구별',title:'-ing의 세 얼굴',body:`
+<div class="tw"><table class="t"><tr><th>구분</th><th>역할</th><th>해석</th><th>예문</th></tr>
+<tr><td>동명사</td><td>명사 (주어·목적어·보어·전치사의 목적어)</td><td>~하는 것</td><td><b class="hl">Simply collecting</b> data is not enough.</td></tr>
+<tr><td>현재분사</td><td>형용사 (명사 수식, 진행형)</td><td>~하는, ~하고 있는</td><td>The girl <b class="hl">waving</b> her hand is my sister.</td></tr>
+<tr><td>분사구문</td><td>부사 (주절 전체 수식)</td><td>~하면서, ~할 때, ~해서</td><td><b class="hl">Waving his hand</b>, he walked out of the house.</td></tr></table></div>`,
+check:{q:'Look at that barking dog. 의 barking은?',o:['동명사','현재분사','분사구문'],a:1}},
+
+{tag:'분사구문 · 교과서',title:'교과서 대표 예문',body:`
+<div class="ex">Using various methods, experts analyze big data. <span class="lbl">p.124</span><br>
+Big data is improving the performance of players, making sports more exciting. <span class="lbl">p.126</span><br>
+Walking along the street, I saw a man with five dogs. <span class="lbl">p.130</span><br>
+Taking off his hat, the man said, "Nice to meet you!" <span class="lbl">p.130</span><br>
+Saying goodbye, she got on the train. <span class="lbl">p.130</span><br>
+Talking on the phone, Tom watched TV. <span class="lbl">p.135</span><br>
+I took a walk, drinking water. <span class="lbl">p.135</span></div>
+<p class="note">분사구문은 문장 앞에도, 콤마 뒤 문장 끝에도 올 수 있습니다.</p>`,check:null},
+
+{tag:'접속사 as · 의미',title:'접속사 as의 4가지 의미',body:`
+<div class="tw"><table class="t"><tr><th>의미</th><th>해석</th><th>식별 힌트</th><th>예문</th></tr>
+<tr><td>비례</td><td>~함에 따라, ~할수록</td><td>비교급, develop · grow · get · become</td><td>As information and communication technology develops, the amount of data we have is getting much greater than before.</td></tr>
+<tr><td>이유</td><td>~ 때문에</td><td>= because, since</td><td>As it was late at night, we went back home.</td></tr>
+<tr><td>시간</td><td>~할 때, ~하는 동안</td><td>= when, while</td><td>She called me as I was leaving the house.</td></tr>
+<tr><td>양태</td><td>~하는 대로, ~하듯이</td><td>방식·예측과의 일치</td><td>Health professionals can now forecast a disease just as weather experts forecast the weather.</td></tr></table></div>`,
+check:{q:'As the weather forecaster predicted, it rained all day. 의 as는?',o:['이유','비례','양태'],a:2}},
+
+{tag:'접속사 as · 구별',title:'as 뒤에 무엇이 오는가',body:`
+<h4>접속사 as + 주어 + 동사</h4>
+<div class="ex">As spring comes, it gets warmer and warmer.</div>
+<h4>전치사 as + 명사 → ~로서, ~처럼</h4>
+<div class="ex">He works <b class="hl">as a data scientist</b>. (데이터 과학자로서)<br>We chose the Greek goddess <b class="hl">as its symbol</b>.</div>
+<h4>as ~ as 원급비교 → ~만큼 …한</h4>
+<div class="ex">Tom runs <b class="hl">as fast as</b> Mike.<br>The situation is not so bad as you think.</div>`,
+check:{q:'He works as a data scientist. 의 as는?',o:['접속사','전치사','원급비교'],a:1}},
+
+{tag:'Word Power',title:'-ly와 -ful',body:`
+<h4>형용사 + -ly = 부사 (~하게)</h4>
+<div class="ex">wise → <b class="hl">wisely</b> &nbsp;·&nbsp; regular → regularly &nbsp;·&nbsp; easy → easily &nbsp;·&nbsp; general → generally &nbsp;·&nbsp; possible → possibly<br><small>본문: If this kind of data is analyzed <b>wisely</b>, …</small></div>
+<h4>명사 + -ful = 형용사 (~이 가득한)</h4>
+<div class="ex">meaning → <b class="hl">meaningful</b> &nbsp;·&nbsp; use → useful &nbsp;·&nbsp; help → helpful &nbsp;·&nbsp; care → careful<br><small>본문: draw <b>meaningful</b> results from it</small></div>
+<p class="note">함정: friend(명사) + -ly = friendly는 부사가 아니라 <b>형용사</b>(다정한)입니다.</p>`,
+check:{q:'If this data is analyzed ___ (wise), we can forecast diseases.',o:['wise','wisely','wiseful'],a:1}},
+
+{tag:'Useful Expressions',title:'본문 필수 표현',body:`
+<h4>focus on ~에 집중하다</h4>
+<div class="ex">Police can prevent further crime by <b class="hl">focusing on</b> the areas and times this map predicts.</div>
+<h4>play a(n) important role (in) (~에서) 중요한 역할을 하다</h4>
+<div class="ex">Experts agree that big data will <b class="hl">play a more and more important role</b> in our lives.</div>
+<h4>be likely to + 동사원형 ~할 가능성이 있다</h4>
+<div class="ex">Police can predict where and when crime is most <b class="hl">likely to happen</b>.<br>They are likely to lose the game because they didn't practice much.</div>`,
+check:{q:'They are likely ___ the game.',o:['losing','to lose','lost'],a:1}}
+];
+
+/* =========================================================
+   02 변환 트레이닝 (학습지 PART 2)
+   ========================================================= */
+const HINT_PC='① 접속사 생략 → ② 주절과 같은 주어 생략 → ③ 동사를 동사원형 + -ing로 (부정이면 Not + -ing)';
+const TRAIN={
+ easy:{name:'Easy · 기초 다지기',items:[
+  {p:'부사절을 분사구문으로 바꿔 쓰세요.',src:'While she ate a sandwich, she waited for the train.',f:[{l:'분사구문 문장',acc:['Eating a sandwich, she waited for the train.']}],e:'While 생략 → 주어 she 생략 → ate → Eating',h:1},
+  {p:'부사절을 분사구문으로 바꿔 쓰세요.',src:'As he waved his hand, he walked out of the house.',f:[{l:'분사구문 문장',acc:['Waving his hand, he walked out of the house.']}],e:'As 생략 → 주어 he 생략 → waved → Waving',h:1},
+  {p:'부사절을 분사구문으로 바꿔 쓰세요.',src:'When I walked along the street, I saw a man with five dogs.',f:[{l:'분사구문 문장',acc:['Walking along the street, I saw a man with five dogs.']}],e:'When 생략 → 주어 I 생략 → walked → Walking',h:1},
+  {p:'부사절을 분사구문으로 바꿔 쓰세요.',src:'Because he took off his hat, the man said, "Nice to meet you!"',f:[{l:'분사구문 문장',acc:['Taking off his hat, the man said, "Nice to meet you!"']}],e:'Because 생략 → 주어 he(= the man) 생략 → took → Taking',h:1},
+  {p:'부사절을 분사구문으로 바꿔 쓰세요.',src:'While the girl sat on the grass, she fed birds in the park.',f:[{l:'분사구문 문장',acc:['Sitting on the grass, the girl fed birds in the park.']}],e:'While 생략 → 주어 생략(주절에 the girl을 씀) → sat → Sitting',h:1},
+  {p:'분사구문을 부사절로 되돌리세요. (while 활용)',src:'Singing a song, Chris washed his car.',f:[{l:'부사절',post:', Chris washed his car.',acc:['While he sang a song','While Chris sang a song','While he was singing a song','While Chris was singing a song','As he was singing a song']}],e:'While he sang a song (또는 While he was singing a song)'},
+  {p:'분사구문을 부사절로 되돌리세요. (as 활용)',src:'Talking on the phone, Brian walked his dog.',f:[{l:'부사절',post:', Brian walked his dog.',acc:['As he talked on the phone','As Brian talked on the phone','As he was talking on the phone','As Brian was talking on the phone','While he was talking on the phone','While Brian was talking on the phone']}],e:'As he talked on the phone (또는 While Brian was talking on the phone)'},
+  {p:'분사구문을 부사절로 되돌리세요. (because 활용)',src:'Being very tired, Jane went to bed early.',f:[{l:'부사절',post:', Jane went to bed early.',acc:['Because Jane was very tired','Because she was very tired']}],e:'Because Jane was very tired'},
+  {p:'분사구문을 부사절로 되돌리세요. (as 활용)',src:'Saying goodbye, she got on the train.',f:[{l:'부사절',post:', she got on the train.',acc:['As she said goodbye','When she said goodbye','As she was saying goodbye']}],e:'As she said goodbye (또는 When she said goodbye)'},
+  {p:'분사구문을 부사절로 되돌리세요. (since 활용)',src:'Not knowing what to say, I kept silent.',f:[{l:'부사절',post:', I kept silent.',acc:['Since I did not know what to say',"Since I didn't know what to say",'Because I did not know what to say',"Because I didn't know what to say"]}],e:'Since I did not know what to say'}
+ ]},
+ basic:{name:'Basic · 기본 다지기',items:[
+  {p:'두 문장을 분사구문으로 합치세요. (watch 활용)',src:'Tom watched TV. + Tom ate dinner.',f:[{l:'한 문장',acc:['Watching TV, Tom ate dinner.','Tom ate dinner, watching TV.']}],e:'Watching TV, Tom ate dinner. (또는 Tom ate dinner, watching TV.)',h:1},
+  {p:'두 문장을 분사구문으로 합치세요. (wave 활용)',src:'Dave waved his hand. + Dave got on the school bus.',f:[{l:'한 문장',acc:['Waving his hand, Dave got on the school bus.','Dave got on the school bus, waving his hand.']}],e:'Waving his hand, Dave got on the school bus.',h:1},
+  {p:'두 문장을 분사구문으로 합치세요. (listen 활용)',src:'Daniel listened to music. + Daniel watered the plants.',f:[{l:'한 문장',acc:['Listening to music, Daniel watered the plants.','Daniel watered the plants, listening to music.']}],e:'Listening to music, Daniel watered the plants.',h:1},
+  {p:'두 문장을 분사구문으로 합치세요. (read 활용)',src:'Minji read a book. + Minji ate a sandwich.',f:[{l:'한 문장',acc:['Reading a book, Minji ate a sandwich.','Minji ate a sandwich, reading a book.']}],e:'Reading a book, Minji ate a sandwich.',h:1},
+  {p:'두 문장을 분사구문으로 합치세요. (listen 활용, 분사구문을 주절 뒤에)',src:'He made a cake. + He listened to the radio.',f:[{l:'한 문장',acc:['He made a cake, listening to the radio.']}],e:'He made a cake, listening to the radio.',h:1},
+  {p:'괄호 안의 동사를 알맞은 분사 형태로 쓰세요.',src:'_____ (use) various methods, experts analyze big data.',f:[{l:'빈칸',acc:['Using']}],e:'전문가들이 능동적으로 사용하므로 현재분사 Using'},
+  {p:'괄호 안의 동사를 알맞은 분사 형태로 쓰세요.',src:"Big data improves players' skills, _____ (make) sports more exciting.",f:[{l:'빈칸',acc:['making']}],e:'연속동작·결과를 나타내는 분사구문 making'},
+  {p:'괄호 안의 동사를 알맞은 분사 형태로 쓰세요.',src:'_____ (not feel) well, I decided to stay home all day.',f:[{l:'빈칸 (두 단어)',acc:['Not feeling']}],e:'분사구문의 부정은 분사 앞에 Not → Not feeling'},
+  {p:'괄호 안의 동사를 알맞은 분사 형태로 쓰세요.',src:'_____ (smile) brightly, she welcomed all the guests.',f:[{l:'빈칸',acc:['Smiling']}],e:'밝게 웃으면서(동시동작) → Smiling'},
+  {p:'괄호 안의 동사를 알맞은 분사 형태로 쓰세요.',src:"_____ (not know) the answer, the boy couldn't say anything.",f:[{l:'빈칸 (두 단어)',acc:['Not knowing']}],e:'답을 몰랐기 때문에(이유, 부정) → Not knowing'}
+ ]},
+ hard:{name:'Challenging · 심화 적용',items:[
+  {p:'어법상 틀린 부분을 찾아 고치세요.',src:'Knowing not what to do, she asked her teacher for help.',f:[{l:'틀린 부분',acc:['Knowing not']},{l:'고친 것',acc:['Not knowing']}],e:'분사구문의 부정어 Not은 분사 바로 앞에 옵니다.'},
+  {p:'어색한 문장을 바른 문장으로 다시 쓰세요.',src:'Walking in the forest, a strange bird attacked him.',f:[{l:'바른 문장',acc:['Walking in the forest, he was attacked by a strange bird.','While he was walking in the forest, a strange bird attacked him.']}],e:'숲을 걸은 주체는 he인데 주절의 주어가 a strange bird라 주어가 일치하지 않습니다.'},
+  {p:'어법상 틀린 부분을 찾아 고치세요.',src:'Used various methods, experts analyze big data.',f:[{l:'틀린 부분',acc:['Used']},{l:'고친 것',acc:['Using']}],e:'전문가들이 능동적으로 사용하는 주체이므로 현재분사 Using'},
+  {p:'어법상 틀린 부분을 찾아 고치세요.',src:'She got wiser as she got more old.',f:[{l:'틀린 부분',acc:['more old']},{l:'고친 것',acc:['older']}],e:'1음절 형용사 old의 비교급은 older'},
+  {p:'어법상 틀린 부분을 찾아 고치세요.',src:'Because of it was late at night, we went back home.',f:[{l:'틀린 부분',acc:['Because of']},{l:'고친 것',acc:['As','Because','Since']}],e:'뒤에 주어 + 동사(it was late)가 오므로 전치사 Because of가 아닌 접속사 As(Because)'},
+  {p:'괄호 안의 단어를 알맞은 형태로 쓰세요.',src:'If this data is analyzed _____ (wise), the spread of the flu can be predicted.',f:[{l:'빈칸',acc:['wisely']}],e:'동사 is analyzed를 꾸미는 부사 wisely'},
+  {p:'괄호 안의 단어를 알맞은 형태로 쓰세요.',src:'Experts draw _____ (meaning) results from big data.',f:[{l:'빈칸',acc:['meaningful']}],e:'명사 results를 꾸미는 형용사 meaningful'},
+  {p:'괄호 안의 단어를 알맞은 형태로 쓰세요.',src:'To stay healthy, we should exercise on a (A) _____ (regular) basis and eat (B) _____ (regular).',f:[{l:'(A)',acc:['regular']},{l:'(B)',acc:['regularly']}],e:'명사 basis를 꾸미는 형용사 regular, 동사 eat을 꾸미는 부사 regularly'},
+  {p:'우리말에 맞게 빈칸을 채우세요. (~에 집중함으로써)',src:'Police can prevent crime by _____ _____ the areas this map predicts.',f:[{l:'빈칸 (두 단어)',acc:['focusing on']}],e:'전치사 by 뒤 동명사 focusing + on'},
+  {p:'우리말에 맞게 빈칸을 채우세요. (중요한 역할을 하다)',src:'Big data will (A) _____ an important (B) _____ in our lives.',f:[{l:'(A)',acc:['play']},{l:'(B)',acc:['role']}],e:'play an important role: 중요한 역할을 하다'}
+ ]}
+};
+
+/* =========================================================
+   03 -ing 판별
+   ========================================================= */
+const ING=[
+ ['<mark>Simply collecting</mark> data is not enough.','g'],
+ ['The girl <mark>waving</mark> her hand is my sister.','p'],
+ ['<mark>Waving</mark> his hand, he walked out of the house.','c'],
+ ['<mark>Roasting</mark> pork is very easy.','g'],
+ ['I like <mark>collecting</mark> old coins.','g'],
+ ['<mark>Taking</mark> off his hat, the man smiled at me.','c'],
+ ['She is good at <mark>analyzing</mark> data.','g'],
+ ['Look at that <mark>barking</mark> dog over there.','p'],
+ ['<mark>Reading</mark> a book, Minji ate a sandwich.','c'],
+ ['His hobby is <mark>playing</mark> the violin.','g'],
+ ['<mark>Using</mark> various methods, experts analyze big data.','c'],
+ ['The man <mark>sitting</mark> on the bench is my uncle.','p'],
+ ['Big data is <mark>improving</mark> the performance of players.','p'],
+ ['I took a walk, <mark>drinking</mark> water.','c'],
+ ['<mark>Watching</mark> movies is my favorite pastime.','g'],
+ ['Not <mark>knowing</mark> what to say, I kept silent.','c'],
+ ['Do you know the boy <mark>singing</mark> on the stage?','p'],
+ ['Thank you for <mark>helping</mark> me.','g']
+];
+const ING_NAME={g:'동명사',p:'현재분사',c:'분사구문'};
+const ING_WHY={g:'명사 역할(주어·목적어·보어·전치사의 목적어) → "~하는 것"',p:'형용사 역할(명사 수식 또는 be + -ing 진행형) → "~하는, ~하고 있는"',c:'부사 역할(콤마로 주절과 연결되어 주절 전체를 수식) → "~하면서, ~할 때, ~해서"'};
+
+/* =========================================================
+   04 as 분류 스피드
+   ========================================================= */
+const AS_TYPES=[['pro','비례','~함에 따라'],['rea','이유','~ 때문에'],['tim','시간','~할 때'],['man','양태','~하듯이'],['pre','전치사','~로서']];
+const AS_SENT=[
+ ['<mark>As</mark> spring comes, it gets warmer and warmer.','pro'],
+ ['She got wiser <mark>as</mark> she got older.','pro'],
+ ['<mark>As</mark> information technology develops, the amount of data is getting greater.','pro'],
+ ['<mark>As</mark> I grow older, I enjoy reading books more.','pro'],
+ ['<mark>As</mark> it gets colder, people wear heavier clothes.','pro'],
+ ['<mark>As</mark> clouds gathered, the sky became dark.','pro'],
+ ['<mark>As</mark> years went by, his hair turned gray.','pro'],
+ ['<mark>As</mark> it gets dark, streetlights turn on.','pro'],
+ ['<mark>As</mark> it was late at night, we went back home.','rea'],
+ ['<mark>As</mark> Jane was very tired, she went to bed early.','rea'],
+ ['We have to run <mark>as</mark> we are late for school.','rea'],
+ ["<mark>As</mark> it is raining a lot, we'll have to stay at home.",'rea'],
+ ["<mark>As</mark> I don't feel well, I need to take a rest.",'rea'],
+ ['<mark>As</mark> it was Sunday, all the shops were closed.','rea'],
+ ["<mark>As</mark> he was poor, he couldn't afford the car.",'rea'],
+ ['The play started <mark>as</mark> I got there.','tim'],
+ ['She called me <mark>as</mark> I was leaving the house.','tim'],
+ ['The phone rang <mark>as</mark> I was washing the dishes.','tim'],
+ ['The train arrived <mark>as</mark> we reached the platform.','tim'],
+ ['I saw her <mark>as</mark> I was getting off the bus.','tim'],
+ ['He watched TV <mark>as</mark> he had dinner.','tim'],
+ ['Health professionals can forecast a disease just <mark>as</mark> weather experts forecast the weather.','man'],
+ ['<mark>As</mark> I told you, we will meet at 6:00.','man'],
+ ['<mark>As</mark> the weather forecaster predicted, it rained all day.','man'],
+ ['Do <mark>as</mark> I say.','man'],
+ ['Please do <mark>as</mark> your doctor advised.','man'],
+ ['Just do it <mark>as</mark> you planned.','man'],
+ ['He works <mark>as</mark> a data scientist.','pre'],
+ ['We chose the Greek goddess <mark>as</mark> its symbol.','pre'],
+ ['She works <mark>as</mark> a volunteer.','pre'],
+ ['He acted <mark>as</mark> a guide for the tourists.','pre'],
+ ['He works <mark>as</mark> a database manager.','pre']
+];
+
+/* =========================================================
+   05 문장 조립
+   ========================================================= */
+const BLOCKS=[
+ {k:'우리는 학교에 늦어서 뛰어야만 한다.',s:'We have to run as we are late for school.'},
+ {k:'비가 많이 오고 있어서 우리는 집에 머물러야 할 것이다.',s:"As it is raining a lot, we'll have to stay at home."},
+ {k:'내가 전에 말했듯이, 함께 일하는 것은 쉽지 않다.',s:'As I said before, working together is not easy.'},
+ {k:'그녀는 나이가 들어감에 따라 더욱 현명해졌다.',s:'As she grew older, she became wiser.'},
+ {k:'날씨가 더 추워짐에 따라 사람들은 더 두꺼운 옷을 입는다.',s:'As it gets colder, people wear heavier clothes.'},
+ {k:'다양한 방법들을 사용하여, 전문가들은 빅데이터를 분석한다.',s:'Using various methods, experts analyze big data.'},
+ {k:'빅데이터는 선수들의 경기력을 향상시키며, 스포츠를 더 흥미진진하게 만든다.',s:'Big data is improving the performance of players, making sports more exciting.'},
+ {k:'무엇을 사야 할지 몰라서, 나는 엄마에게 여쭤보았다.',s:'Not knowing what to buy, I asked Mom.'},
+ {k:'길을 걷다가, 나는 개 다섯 마리를 데리고 있는 남자를 보았다.',s:'Walking along the street, I saw a man with five dogs.'},
+ {k:'작별 인사를 하며, 그녀는 기차에 올랐다.',s:'Saying goodbye, she got on the train.'},
+ {k:'경찰은 범죄가 어디에서 가장 일어날 것 같은지 예측할 수 있다.',s:'Police can predict where crime is most likely to happen.'},
+ {k:'빅데이터는 우리 삶에서 중요한 역할을 할 것이다.',s:'Big data will play an important role in our lives.'}
+];
+
+/* =========================================================
+   06 실전 50제
+   ========================================================= */
+const EXAM=[
+ {n:1,q:'다음 중 분사구문에 대한 설명으로 옳지 않은 것은?',o:['접속사와 주어가 있는 부사절을 간결한 분사구로 줄인 것이다.','부사절의 주어와 주절의 주어가 일치할 때 부사절 주어를 생략한다.','분사구문의 부정은 분사 뒤에 not이나 never를 쓴다.','분사구문은 문맥에 따라 동시동작, 시간, 이유 등의 의미를 갖는다.','의미를 명확히 나타내기 위해 접속사를 생략하지 않고 남겨두기도 한다.'],a:2,e:'분사구문의 부정은 not이나 never를 분사 앞에 둡니다. (예: Not knowing…)'},
+ {n:2,q:'다음 문장을 분사구문으로 바르게 전환한 것은?',box:'While she ate a sandwich, she waited for the train.',o:['Eaten a sandwich, she waited for the train.','Eating a sandwich, she waited for the train.','She eating a sandwich, waited for the train.','To eat a sandwich, she waited for the train.','While eaten a sandwich, she waited for the train.'],a:1,e:'While 생략, 주어 she 생략, ate → Eating.'},
+ {n:3,q:'다음 문장을 분사구문으로 바르게 바꾼 것은?',box:'Because Tom was tired, he stayed at home all day.',o:['Be tired, Tom stayed at home all day.','Tired being, Tom stayed at home all day.','Being tired, Tom stayed at home all day.','Having tired, Tom stayed at home all day.','Was tired, Tom stayed at home all day.'],a:2,e:'Because 생략, 주어 생략, was → Being. Being은 생략할 수도 있지만 보기 중에서는 Being tired가 정확합니다.'},
+ {n:4,q:'다음 문장을 분사구문으로 바꿀 때 빈칸에 들어갈 알맞은 말은?',box:"As he did not have enough money, he couldn't buy the ticket.\n→ ________ ________ enough money, he couldn't buy the ticket.",o:['Having not','Not having','Not had','Had not',"Didn't have"],a:1,e:'부정어 Not을 분사 바로 앞에 두고 have → having: Not having.'},
+ {n:5,q:'다음 분사구문을 부사절로 바르게 풀어 쓴 것은?',box:'Walking along the street, I saw a man with five dogs.',o:['Because I walked along the street, I saw a man with five dogs.','Although I walked along the street, I saw a man with five dogs.','If I walked along the street, I saw a man with five dogs.','When I was walking along the street, I saw a man with five dogs.','Unless I walked along the street, I saw a man with five dogs.'],a:3,e:'"길을 걷고 있을 때"라는 시간의 의미이므로 When I was walking ~이 자연스럽습니다.'},
+ {n:6,q:'다음 밑줄 친 분사구문의 문맥상 의미로 가장 알맞은 것은?',box:'<u>Waving his hand</u>, he walked out of the house.',o:['이유 (~ 때문에)','조건 (만약 ~한다면)','양보 (비록 ~일지라도)','동시동작 (~하면서)','결과 (그 결과 ~하다)'],a:3,e:'손을 흔들면서 걸어 나간 것이므로 동시동작입니다.'},
+ {n:7,q:'다음 밑줄 친 분사구문의 문맥상 의미가 나머지 넷과 다른 하나는?',o:['<u>Eating lunch</u>, we talked about the soccer match.','<u>Listening to music</u>, Daniel watered the plants.','<u>Feeling sick</u>, she went to see a doctor immediately.','<u>Talking on the phone</u>, Tom watched TV.','<u>Singing a song</u>, Chris washed his car.'],a:2,e:'나머지는 동시동작(~하면서), ③은 "아팠기 때문에"라는 이유입니다.'},
+ {n:8,q:"다음 중 밑줄 친 '-ing'의 쓰임이 '분사구문'인 것은?",o:['<u>Roasting</u> pork is very easy.','I like <u>collecting</u> old coins.','The girl <u>waving</u> her hand is my sister.','<u>Taking</u> off his hat, the man smiled at me.','She is good at <u>analyzing</u> data.'],a:3,e:'①②⑤는 동명사, ③은 명사를 꾸미는 현재분사, ④가 분사구문입니다.'},
+ {n:9,q:"다음 밑줄 친 부분이 '현재분사'로 쓰인 것은?",o:['Simply <u>collecting</u> data is not enough.','Look at that <u>barking</u> dog over there.','<u>Reading</u> a book, Minji ate a sandwich.','His hobby is <u>playing</u> the violin.','<u>Using</u> various methods, experts analyze big data.'],a:1,e:'①④는 동명사, ③⑤는 분사구문, ②의 barking은 명사 dog을 꾸미는 현재분사입니다.'},
+ {n:10,q:"다음 중 어법상 '옳지 않은' 문장은?",o:['Sitting on the grass, the girl fed birds.','Saying goodbye, she got on the train.','Not knowing what to say, he kept silent.','Walking in the park, a ball hit my head.','Smiling warmly, the teacher greeted the students.'],a:3,e:'공원을 걸은 주체가 a ball이 되어 주어가 일치하지 않습니다. → Walking in the park, I was hit by a ball.'},
+ {n:11,q:'다음 문장의 빈칸에 들어갈 가장 알맞은 형태는?',box:'Big data is improving the performance of players, ________ sports more exciting.',o:['made','make','makes','making','to be made'],a:3,e:'연속동작·결과를 나타내는 능동 분사구문 자리이므로 making.'},
+ {n:12,q:'다음 두 문장을 분사구문으로 합칠 때 가장 자연스러운 것은?',box:'Dave sang a song.\nDave took a shower.',o:['Sing a song, Dave took a shower.','Singing a song, Dave took a shower.','Sang a song, Dave took a shower.','Sang a song, Dave taking a shower.','Sung a song, Dave took a shower.'],a:1,e:'동사원형·과거형은 분사구문이 될 수 없습니다. Singing a song이 정답.'},
+ {n:13,q:"다음 중 두 문장의 뜻이 서로 '같지 않은' 것은?",o:['As I was hungry, I ate two bowls of rice.\n= Being hungry, I ate two bowls of rice.','While he listened to the radio, he made a cake.\n= Listening to the radio, he made a cake.','Because she did not feel well, she went home early.\n= Not feeling well, she went home early.','If you turn to the left, you will find the station.\n= Turning to the left, you will find the station.','Although he worked hard, he failed the exam.\n= Working hard, so he failed the exam.'],a:4,e:'양보절은 Working hard, he failed the exam.이 되어야 하며, so를 덧붙이면 비문입니다.'},
+ {n:14,q:'다음 우리말을 분사구문으로 바르게 영작한 것은?',box:'물을 마시면서, 나는 산책을 했다.',o:['I took a walk, drank water.','Drinking water, I took a walk.','Drank water, I took a walk.','To drink water, I took a walk.','Drink water, I took a walk.'],a:1,e:'동시동작의 능동 분사구문 Drinking water.'},
+ {n:15,q:'다음 빈칸 (A), (B)에 들어갈 말이 바르게 짝지어진 것은?',box:'(A) ________ various methods, experts analyze big data.\n(B) ________ on the phone, Tom watched TV.',o:['Use - Talk','Used - Talked','Using - Talking','Using - Talked','Used - Talking'],a:2,e:'(A) 능동적으로 사용 → Using, (B) 통화하면서 → Talking.'},
+ {n:16,q:'다음 문장에서 밑줄 친 As의 문맥상 의미로 가장 알맞은 것은?',box:'<u>As</u> information and communication technology develops, the amount of data we have is getting much greater.',o:['~ 때문에 (이유)','~함에 따라 (비례)','~할 때 (시간)','~처럼, ~하듯이 (양태)','~임에도 불구하고 (양보)'],a:1,e:'기술이 발전함에 따라 데이터가 많아진다 → 비례.'},
+ {n:17,q:"다음 문장의 밑줄 친 as와 쓰임이 '같은' 것은?",box:'She got wiser <u>as</u> she got older.',o:['As Jane was very tired, she went to bed early.','As spring comes, it gets warmer and warmer.','As the weather forecaster predicted, it rained all day.','As it was late at night, we went back home.','Do as I tell you to do.'],a:1,e:'제시문과 ②는 비례. ①④ 이유, ③⑤ 양태.'},
+ {n:18,q:'다음 문장에서 밑줄 친 As와 의미가 같은 접속사는?',box:'<u>As</u> it is raining a lot, we will have to stay at home.',o:['When','While','Because','Although','If'],a:2,e:'비가 많이 오기 때문에 → 이유, Because(Since)와 같습니다.'},
+ {n:19,q:'다음 문장의 밑줄 친 as의 의미는?',box:'Health professionals can now forecast a disease just <u>as</u> weather experts forecast the weather.',o:['~함에 따라','~ 때문에','~하듯이, ~처럼','~할 때','~로서'],a:2,e:'기상 전문가가 날씨를 예측하듯이 → 양태.'},
+ {n:20,q:"다음 중 밑줄 친 as가 '이유(~ 때문에)'로 쓰인 것은?",o:['<u>As</u> you sow, so shall you reap.','<u>As</u> the sun rose, the fog disappeared.','<u>As</u> I was late for school, I had to run.','I saw her <u>as</u> I was getting off the bus.','<u>As</u> years went by, his hair turned gray.'],a:2,e:'③ 학교에 늦었기 때문에 → 이유. ① 양태, ②⑤ 비례, ④ 시간.'},
+ {n:21,q:"다음 중 밑줄 친 as가 '시간(~할 때)'으로 쓰인 것은?",o:['The train arrived <u>as</u> we reached the platform.','<u>As</u> it was very dark, I couldn\'t see anything.','<u>As</u> I grow older, I understand my parents better.','Leave the room <u>as</u> it is.','<u>As</u> he was poor, he couldn\'t afford the car.'],a:0,e:'① 플랫폼에 도착했을 때 → 시간. ②⑤ 이유, ③ 비례, ④ 양태.'},
+ {n:22,q:'다음 <보기>의 as와 쓰임이 같은 문장은?',box:'<보기> <u>As</u> I told you before, working together is not easy.',o:['As winter comes, the days become shorter.',"As I don't feel well, I need to take a rest.",'Please do as your doctor advised.','He watched TV as he had dinner.','As it was Sunday, all the shops were closed.'],a:2,e:'<보기>와 ③은 "~한 대로" 양태. ① 비례, ②⑤ 이유, ④ 시간.'},
+ {n:23,q:"다음 중 밑줄 친 as의 품사가 '전치사'인 것은?",o:['He works <u>as</u> a database manager.','<u>As</u> I got there, the concert began.','<u>As</u> she had no money, she couldn\'t buy it.','<u>As</u> it gets colder, people wear coats.','Just do it <u>as</u> you planned.'],a:0,e:'① as 뒤에 명사구가 와서 "~로서" → 전치사. 나머지는 주어 + 동사가 오는 접속사.'},
+ {n:24,q:'다음 중 밑줄 친 as의 쓰임이 나머지 넷과 다른 하나는?',o:['The situation is not so bad <u>as</u> you think.','This phone is not as expensive <u>as</u> that one.','He cannot run as fast <u>as</u> Tom.','She is as kind <u>as</u> an angel.','<u>As</u> the sun set, it became chilly.'],a:4,e:'①~④는 원급비교 구문의 as, ⑤는 "해가 짐에 따라" 비례의 접속사.'},
+ {n:25,q:'다음 밑줄 친 as의 해석이 어색한 것은?',o:['<u>As</u> I was tired, I went to sleep. (~ 때문에)','<u>As</u> it gets dark, streetlights turn on. (~함에 따라)','He sang a song <u>as</u> he drove. (~하면서)','<u>As</u> you know, he is an expert. (~하듯이)','She works <u>as</u> a volunteer. (~하기 때문에)'],a:4,e:'⑤ as 뒤에 명사가 오므로 전치사 "~로서"(자원봉사자로서)입니다.'},
+ {n:26,q:'다음 두 문장의 빈칸에 공통으로 들어갈 단어는?',box:'________ the weather was bad, we canceled the picnic.\n________ you grow older, you will become wiser.',o:['Although','As','While','If','Unless'],a:1,e:'첫 문장은 이유, 둘째는 비례 → 두 뜻을 모두 가진 As.'},
+ {n:27,q:'다음 문장과 의미가 가장 가까운 것은?',box:'As Jane was very hungry, she ordered two pizzas.',o:['When Jane was very hungry, she ordered two pizzas.','Because Jane was very hungry, she ordered two pizzas.','Although Jane was very hungry, she ordered two pizzas.','As Jane ordered two pizzas, she became hungry.','If Jane were hungry, she would order two pizzas.'],a:1,e:'배가 고팠기 때문에 → 이유, Because와 같습니다.'},
+ {n:28,q:'다음 빈칸에 as를 넣었을 때 알맞은 해석은?',box:'________ it gets colder, people wear heavier clothes.',o:['날씨가 더 추워졌음에도 불구하고','날씨가 더 추워지기 전에','날씨가 더 추워짐에 따라','날씨가 더 추워지는 방식대로','날씨가 더 추워지는 것만큼'],a:2,e:'비교급 colder, heavier와 함께 쓰인 비례의 as.'},
+ {n:29,q:'다음 우리말을 영어로 옮길 때 빈칸에 들어갈 말로 알맞은 것은?',box:'내가 전에 말했듯이, 그 문제는 해결하기 어렵다.\n→ ________ ________ ________ before, the problem is difficult to solve.',o:['As I said','Because I said','While I saying','Since I says','As told me'],a:0,e:'"내가 말했듯이"는 양태의 As I said.'},
+ {n:30,q:"다음 중 '비례(~함에 따라)'의 as가 쓰인 문장은?",o:['As we were late, we took a taxi.','As the bell rang, students entered the classroom.','As clouds gathered, the sky became dark.','Do as you wish.','He acted as a guide for the tourists.'],a:2,e:'③ 구름이 모임에 따라 하늘이 어두워졌다 → 비례. ① 이유, ② 시간, ④ 양태, ⑤ 전치사.'},
+ {n:31,q:"다음 중 '형용사 + -ly = 부사'의 형태가 아닌 것은?",o:['wise → wisely','easy → easily','regular → regularly','friend → friendly','general → generally'],a:3,e:'friend는 명사이고, friendly는 부사가 아니라 형용사(다정한)입니다.'},
+ {n:32,q:"다음 중 '명사 + -ful = 형용사'의 연결이 바르지 않은 것은?",o:['meaning → meaningful','use → useful','help → helpful','care → careful','quick → quickful'],a:4,e:'quick은 형용사이고 quickful이라는 단어는 없습니다.'},
+ {n:33,q:'다음 빈칸에 들어갈 가장 알맞은 전치사는?',box:'Police can prevent further crime by focusing ________ the hot spots.',o:['in','on','at','with','about'],a:1,e:'focus on: ~에 집중하다.'},
+ {n:34,q:'다음 빈칸에 들어갈 표현으로 알맞은 것은?',box:'Experts agree that big data will ________ a more and more important ________ in our future lives.',o:['take - rule','play - role','make - position','give - part','keep - job'],a:1,e:'play an important role in: ~에서 중요한 역할을 하다.'},
+ {n:35,q:'다음 괄호 안에서 어법상 알맞은 것은?',box:"They are likely [ losing / to lose / lost ] the game because they didn't practice much.",o:['losing','to lose','lost','lose','to losing'],a:1,e:'be likely to + 동사원형 → to lose.'},
+ {n:36,q:'교과서 본문의 빈칸 (A), (B)에 들어갈 말이 바르게 짝지어진 것은?',box:'(A) ________ this kind of data is analyzed wisely, the spread of the flu can be predicted.\nBig data is improving the performance of players, (B) ________ sports more exciting.',o:['Although - made','If - making','Because - make','Unless - to make','When - made'],a:1,e:'(A) 조건의 If, (B) 분사구문 making.'},
+ {n:37,q:'다음 문장의 밑줄 친 부분 중 어법상 틀린 것은?',box:'①<u>Simply collecting</u> data, however, ②<u>is</u> not enough. ③<u>Using</u> various methods, experts analyze big data and ④<u>draws</u> ⑤<u>meaningful</u> results from it.',o:['Simply collecting','is','Using','draws','meaningful'],a:3,e:'주어가 복수 experts이고 analyze와 병렬이므로 draws → draw.'},
+ {n:38,q:'괄호 안의 단어를 문맥에 맞게 바꾼 것은?',box:'If this kind of data is analyzed ________ (wise), we can forecast diseases.',o:['wisdom','wiser','wisely','wiseful','wisest'],a:2,e:'동사 is analyzed를 꾸미는 부사 wisely.'},
+ {n:39,q:'분사구문으로 바꿀 때 빈칸에 들어갈 한 단어는?',box:'As they waved their hands, they walked out of the classroom.\n→ ________ their hands, they walked out of the classroom.',o:['Waved','Wave','Waving','To wave','Waves'],a:2,e:'As와 they 생략, waved → Waving.'},
+ {n:40,q:'다음 중 교과서 대화 표현으로 어색한 것은?',o:['A: Do you know how to return these books?\nB: Sure. First, insert the card.','A: I really appreciate your help.\nB: My pleasure.','A: Can you tell me how to use this machine?\nB: Then, press the START button.','A: Thank you for your help.\nB: Don\'t mention it.','A: I really appreciate your help.\nB: You\'re welcome.'],a:2,e:'사용법의 첫 단계를 묻는데 Then(그다음에)으로 시작하는 것은 어색합니다. First로 시작해야 합니다.'},
+ {n:41,q:"다음 중 어법상 '옳은' 문장의 개수는?",box:'(a) Not having breakfast, he felt dizzy.\n(b) Singing loudly, the shower was taken by Dave.\n(c) As information technology develops, data becomes larger.\n(d) Having not a map, we lost our way in the mountain.\n(e) Sitting on the grass, the girl fed the birds.',o:['1개','2개','3개','4개','5개'],a:2,e:'옳은 것은 (a)(c)(e) 3개. (b) 주어 불일치, (d) Having not → Not having.'},
+ {n:42,tag:'서술형',q:'다음 문장이 어법상 어색한 이유를 밝히고, 바른 문장으로 다시 쓰시오.',box:'Walking along the street, a strange dog followed him.',f:[{l:'어색한 이유 (스스로 확인)',self:'길을 걸어간 주체는 그(he)인데 주절의 주어가 a strange dog이라 분사구문과 주절의 주어가 일치하지 않는다.'},{l:'바른 문장',acc:['Walking along the street, he was followed by a strange dog.','While he was walking along the street, a strange dog followed him.']}],e:'분사의 의미상 주어와 주절의 주어를 일치시켜야 합니다.'},
+ {n:43,tag:'서술형',q:'어법상 어색한 부분을 고쳐 문장 전체를 다시 쓰시오.',box:'Knowing not the answer to the question, he stayed quiet.',f:[{l:'바른 문장',acc:['Not knowing the answer to the question, he stayed quiet.']}],e:'부정어 Not은 분사 knowing 바로 앞에 옵니다.'},
+ {n:44,tag:'서술형',q:'두 문장을 분사구문을 사용하여 한 문장으로 쓰시오. (분사구문을 문장 맨 앞에 둘 것)',box:'Daniel listened to music.\nDaniel watered the plants.',f:[{l:'한 문장',acc:['Listening to music, Daniel watered the plants.']}],e:'동시동작 분사구문 Listening to music을 앞에 둡니다.'},
+ {n:45,tag:'서술형',q:'다음 부사절 문장을 3단계 규칙에 맞게 분사구문으로 전환하시오.',box:"Because I did not know what to buy for Mom's birthday, I asked her.",f:[{l:'분사구문 문장',acc:["Not knowing what to buy for Mom's birthday, I asked her."]}],e:'Because 생략, 주어 I 생략, did not know → Not knowing.'},
+ {n:46,tag:'서술형',q:'우리말과 일치하도록 접속사 as를 사용하여 단어를 배열하시오.',box:'우리는 학교에 늦었기 때문에 뛰어야만 한다.\n(late / we / as / for / school / are)',f:[{l:'We have to run',acc:['as we are late for school','We have to run as we are late for school.']}],e:'We have to run as we are late for school.'},
+ {n:47,tag:'서술형',q:'우리말 뜻에 맞게 빈칸에 들어갈 단어를 순서대로 쓰시오.',box:'그녀는 나이가 들어감에 따라 더욱 현명해졌다.\n→ ( ① ) she grew ( ② ), she became ( ③ ).',f:[{l:'①',acc:['As']},{l:'②',acc:['older']},{l:'③',acc:['wiser']}],e:'As she grew older, she became wiser. (비례의 as + 비교급)'},
+ {n:48,tag:'서술형',q:"조건에 맞게 한 문장으로 영작하시오.\n· 'play the piano'와 'sing a song'을 활용할 것\n· 분사구문을 문장의 뒤쪽에 둘 것\n· 주어는 I, 시제는 과거형",f:[{l:'문장',acc:['I played the piano, singing a song.','I sang a song, playing the piano.']}],e:'I played the piano, singing a song. (I sang a song, playing the piano.도 정답)'},
+ {n:49,tag:'서술형',q:'밑줄 친 As의 문맥적 의미를 밝히고 우리말로 해석하시오.',box:'<u>As</u> the weather forecaster predicted, it rained all day.',f:[{l:'As의 용법',kw:['양태'],ans:'양태 (~한 대로, ~하듯이)'},{l:'우리말 해석 (스스로 확인)',self:'기상 예보관이 예측했던 대로, 하루 종일 비가 내렸다.'}],e:'예보관의 예측과 일치하게 일이 일어났음을 나타내는 양태의 as.'},
+ {n:50,tag:'서술형',q:'빈칸 (1), (2)에 들어갈 가장 알맞은 말을 각각 쓰시오.',box:'Big data helps police predict where crime is most (1) ________ to happen.\nPolice can prevent crime by (2) ________ on those dangerous areas.',f:[{l:'(1)',acc:['likely']},{l:'(2)',acc:['focusing']}],e:'(1) be likely to + 동사원형, (2) 전치사 by 뒤 동명사 focusing (on).'}
+];
+const SECS={P:'분사구문 01–15',A:'접속사 as 16–30',V:'어휘·본문 31–40',H:'고난도·서술형 41–50'};
+const secOf=n=>n<=15?'P':n<=30?'A':n<=40?'V':'H';
+
+/* =========================================================
+   공통
+   ========================================================= */
+const app=document.getElementById('app');
+const $=s=>app.querySelector(s);
+const $$=s=>[...app.querySelectorAll(s)];
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const rich=s=>esc(s).replace(/&lt;(\/?)u&gt;/g,'<$1u>');
+const plain=s=>String(s).replace(/<\/?u>/g,'');
+const norm=s=>String(s).toLowerCase().replace(/[’‘`´]/g,"'").replace(/[.,!?"“”'’:;()\[\]→➔·]/g,' ').replace(/\s+/g,'').trim();
+const MARK='①②③④⑤';
+function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),1300);}
+function streak(n){if(n<3)return;const d=document.createElement('div');d.className='streak';d.textContent=n+' 연속 정답';document.body.appendChild(d);setTimeout(()=>d.remove(),1100);}
+function setBest(id,score,max){const r=max?score/max:0;const o=prog.best[id];if(!o||r>=o.r)prog.best[id]={score,max,r};save();}
+function checkField(f,val){
+  if(f.self) return null;
+  if(f.kw) return f.kw.some(k=>String(val).includes(k));
+  return f.acc.some(a=>norm(a)===norm(val));
+}
+function fieldAns(f){return f.ans||(f.acc?f.acc[0]:f.self);}
+function head(eyebrow,title,stats){return `<div class="phead"><div><div class="eyebrow">${eyebrow}</div><h2>${title}</h2></div><div class="stats">${stats||''}</div></div>`;}
+function scrollTop(){try{window.scrollTo({top:0,behavior:'instant'});}catch(e){window.scrollTo(0,0);}}
+
+const STAGES=[
+ {id:'concept',t:'개념 노트',d:'분사구문 · 접속사 as · -ly/-ful · 필수 표현 10장 + 확인 문제'},
+ {id:'train',t:'변환 트레이닝',d:'부사절 ↔ 분사구문 직접 쓰기 · 오류 수정 (Easy / Basic / Challenging)'},
+ {id:'ing',t:'-ing 판별',d:'동명사 · 현재분사 · 분사구문 구별하기'},
+ {id:'as',t:'as 분류 스피드',d:'60초 안에 비례 · 이유 · 시간 · 양태 · 전치사 분류'},
+ {id:'block',t:'문장 조립',d:'단어 블록으로 교과서 핵심 문장 완성'},
+ {id:'exam',t:'실전 50제',d:'객관식 41 · 서술형 9 · 전 문항 해설 · 오답노트'}
+];
+function stagePct(id){
+  if(id==='exam'){const ok=Object.values(prog.exam).filter(v=>v==='ok').length;return Object.keys(prog.exam).length?ok/50:null;}
+  if(id==='train'){const ks=Object.keys(TRAIN).map(k=>prog.best['train_'+k]).filter(Boolean);return ks.length?ks.reduce((s,b)=>s+b.r,0)/3:null;}
+  const b=prog.best[id];return b?b.r:null;
+}
+
+/* =========================================================
+   홈
+   ========================================================= */
+function home(){
+  const done=STAGES.filter(s=>stagePct(s.id)!==null).length;
+  const ok=Object.values(prog.exam).filter(v=>v==='ok').length;
+  app.innerHTML=`
+  <section class="hero">
+    <div class="eyebrow">동아(윤정미) 중학 영어 3 · LESSON 7</div>
+    <h1>Technology in Our Lives</h1>
+    <div class="chips"><span class="chip on">분사구문</span><span class="chip on">접속사 as</span><span class="chip">-ly / -ful</span><span class="chip">focus on</span><span class="chip">play a role in</span><span class="chip">be likely to</span></div>
+  </section>
+  <div class="kpis">
+    <div class="kpi"><div class="k">학습한 단계</div><div class="v">${done}<small>/ 6</small></div></div>
+    <div class="kpi"><div class="k">실전 50제 정답</div><div class="v">${ok}<small>/ 50</small></div></div>
+    <div class="kpi"><div class="k">오답노트</div><div class="v">${prog.wrong.length}<small>문항</small></div></div>
+  </div>
+  <div class="sec-title">LEARNING PATH</div>
+  <div class="stages">${STAGES.map((s,i)=>{const p=stagePct(s.id);return `
+    <button class="st ${p!==null?'done':''}" onclick="go('${s.id}')">
+      <div class="no">${String(i+1).padStart(2,'0')}</div>
+      <div><h3>${s.t}</h3><p>${s.d}</p></div>
+      <div class="rt"><div class="pct ${p===null?'none':''}">${p===null?'시작 전':Math.round(p*100)+'%'}</div><div class="mbar"><div style="width:${p===null?0:Math.round(p*100)}%"></div></div></div>
+    </button>`;}).join('')}</div>
+  <div class="wrong-row"><div><b>오답노트</b><span>실전 50제에서 틀린 문항만 다시 풉니다.</span></div><button class="btn btn-pri" onclick="examWrong()" ${prog.wrong.length?'':'disabled'}>다시 풀기 (${prog.wrong.length})</button></div>`;
+  scrollTop();
+}
+function go(id){({concept:concept,train:trainMenu,ing:ingGame,as:asIntro,block:blockGame,exam:()=>exam()})[id]();}
+function resetAll(){if(!confirm('모든 학습 기록과 오답노트를 지울까요?'))return;prog={best:{},exam:{},wrong:[]};save();home();toast('기록을 초기화했습니다');}
+
+function result(eyebrow,score,max,msg,again,extra){
+  const pct=Math.round(score/Math.max(max,1)*100);
+  const line=pct>=90?'완벽합니다. 시험장에서도 그대로!':pct>=70?'좋습니다. 틀린 부분만 다시 보면 됩니다.':pct>=40?'개념 노트를 한 번 더 보고 다시 도전해 보세요.':'개념 노트부터 차근차근 다시 시작해 봅시다.';
+  app.innerHTML=head(eyebrow,'결과')+`<div class="card res">
+    <div class="big">${score}<small> / ${max}</small></div>
+    <h3>${msg||'정답률 '+pct+'%'}</h3><p>${line}</p>${extra||''}
+    <div class="acts"><button class="btn btn-sec" id="again">다시 하기</button><button class="btn btn-pri" onclick="home()">학습 경로로</button></div></div>`;
+  $('#again').onclick=again;scrollTop();
+}
+
+/* =========================================================
+   01 개념 노트
+   ========================================================= */
+function concept(){
+  let i=0,got=0;const tried=new Set();
+  const draw=()=>{
+    const c=CONCEPTS[i];
+    app.innerHTML=head('STEP 01 · 개념 노트',c.title,`<span class="stat"><b>${i+1}</b> / ${CONCEPTS.length}</span>`)+
+    `<div class="track"><div style="width:${(i+1)/CONCEPTS.length*100}%"></div></div>
+    <div class="card cpt"><span class="tag">${c.tag}</span><div style="margin-top:10px">${c.body}</div>
+    ${c.check?`<div class="chk"><div class="q">${esc(c.check.q)}</div><div class="row">${c.check.o.map((o,k)=>`<button data-k="${k}">${esc(o)}</button>`).join('')}</div><div class="msg" id="cm"></div></div>`:''}
+    </div>
+    <div class="dots">${CONCEPTS.map((_,k)=>`<span class="${k===i?'on':''}"></span>`).join('')}</div>
+    <div class="acts"><button class="btn btn-sec" id="pv" ${i?'':'disabled'}>이전</button><div class="r"><button class="btn btn-pri" id="nx">${i===CONCEPTS.length-1?'완료':'다음'}</button></div></div>`;
+    $$('.chk button').forEach(b=>b.onclick=()=>{
+      if(tried.has(i))return;tried.add(i);
+      const k=+b.dataset.k,ok=k===c.check.a;if(ok)got++;
+      $$('.chk button').forEach((x,j)=>{if(j===c.check.a)x.classList.add('ok');else if(j===k)x.classList.add('no');});
+      $('#cm').innerHTML=ok?'<span class="ok-t">정답입니다.</span>':'<span class="no-t">다시 확인해 보세요.</span> 초록색이 정답입니다.';
+    });
+    $('#pv').onclick=()=>{i--;draw();scrollTop();};
+    $('#nx').onclick=()=>{if(i<CONCEPTS.length-1){i++;draw();scrollTop();}else{const m=CONCEPTS.filter(c=>c.check).length;setBest('concept',got,m);result('STEP 01 · 개념 노트',got,m,'개념 확인 문제 '+got+' / '+m,concept);}};
+  };
+  draw();scrollTop();
+}
+
+/* =========================================================
+   02 변환 트레이닝
+   ========================================================= */
+function trainMenu(){
+  app.innerHTML=head('STEP 02 · 변환 트레이닝','난이도를 고르세요')+
+  `<div class="stages">${Object.entries(TRAIN).map(([k,s],i)=>{const b=prog.best['train_'+k];return `
+   <button class="st ${b?'done':''}" onclick="train('${k}')"><div class="no">${['E','B','C'][i]}</div>
+   <div><h3>${s.name}</h3><p>${k==='easy'?'부사절 → 분사구문 전환, 분사구문 → 부사절 복원':k==='basic'?'두 문장 합치기, 알맞은 분사 형태 쓰기':'오류 수정, -ly / -ful과 필수 표현'} · ${s.items.length}문항</p></div>
+   <div class="rt"><div class="pct ${b?'':'none'}">${b?b.score+' / '+b.max:'시작 전'}</div></div></button>`;}).join('')}</div>
+  <p class="hintline" style="margin-top:10px">대소문자와 마침표·쉼표는 채점에 영향을 주지 않습니다. 철자는 정확하게 써 주세요.</p>`;
+  scrollTop();
+}
+function train(key){
+  const set=TRAIN[key];const items=set.items;let i=0,score=0;
+  const draw=()=>{
+    const it=items[i];let checked=false;
+    app.innerHTML=head('STEP 02 · '+set.name,'문항 '+(i+1),`<span class="stat">정답 <b>${score}</b></span><span class="stat"><b>${i+1}</b> / ${items.length}</span>`)+
+    `<div class="track"><div style="width:${i/items.length*100}%"></div></div>
+    <div class="card"><div class="qno">Q${i+1}</div><div class="qtext">${esc(it.p)}</div>
+    <div class="qbox">${esc(it.src)}</div>
+    ${it.f.map((f,j)=>`<div class="fld"><label>${esc(f.l)}</label><div class="row"><input data-j="${j}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="여기에 입력">${f.post?`<span class="fix">${esc(f.post)}</span>`:''}</div></div>`).join('')}
+    ${it.h?`<div id="hb"></div>`:''}
+    <div id="fb"></div>
+    <div class="acts">${it.h?'<button class="btn btn-sec" id="hint">힌트: 3단계 공식</button>':'<span></span>'}<div class="r"><button class="btn btn-pri" id="sub">채점</button></div></div></div>`;
+    const ins=$$('.card input');ins[0].focus();
+    ins.forEach(x=>x.addEventListener('keydown',e=>{if(e.key==='Enter')$('#sub').click();}));
+    if(it.h)$('#hint').onclick=()=>{$('#hb').innerHTML=`<div class="hintbox">${HINT_PC}</div>`;};
+    $('#sub').onclick=()=>{
+      if(checked){ if(i<items.length-1){i++;draw();scrollTop();} else {setBest('train_'+key,score,items.length);result('STEP 02 · '+set.name,score,items.length,null,()=>train(key));} return; }
+      if(ins.some(x=>!x.value.trim())){toast('빈칸을 모두 채워 주세요');return;}
+      checked=true;let ok=true;
+      ins.forEach((x,j)=>{const g=checkField(it.f[j],x.value);x.classList.add(g?'ok':'no');x.disabled=true;if(!g)ok=false;});
+      if(ok)score++;
+      $('#fb').innerHTML=`<div class="fb ${ok?'good':'bad'}"><div class="h">${ok?'정답':'오답'}</div>모범답안: <span class="a">${it.f.map(f=>esc(fieldAns(f))).join(' / ')}</span><div class="exp">${esc(it.e)}</div></div>`;
+      $('#sub').textContent=i<items.length-1?'다음 문항':'결과 보기';
+    };
+  };
+  draw();scrollTop();
+}
+
+/* =========================================================
+   03 -ing 판별
+   ========================================================= */
+function ingGame(){
+  const qs=shuffle(ING).slice(0,14);let i=0,score=0,run=0;
+  const draw=()=>{
+    const [s,t]=qs[i];
+    app.innerHTML=head('STEP 03 · -ing 판별','밑줄 친 -ing의 정체는?',`<span class="stat">정답 <b>${score}</b></span><span class="stat"><b>${i+1}</b> / ${qs.length}</span>`)+
+    `<div class="track"><div style="width:${i/qs.length*100}%"></div></div>
+    <div class="card"><div class="sent">${s}</div>
+    <div class="choices c3">${Object.entries(ING_NAME).map(([k,v])=>`<button class="ch" data-t="${k}">${v}<small>${k==='g'?'명사 역할':k==='p'?'형용사 역할':'부사 역할'}</small></button>`).join('')}</div>
+    <div id="fb"></div></div>`;
+    $$('.ch').forEach(b=>b.onclick=()=>{
+      const ok=b.dataset.t===t;
+      $$('.ch').forEach(x=>{x.disabled=true;if(x.dataset.t===t)x.classList.add('correct');else if(x===b)x.classList.add('wrong');});
+      if(ok){score++;run++;streak(run);}else run=0;
+      $('#fb').innerHTML=`<div class="fb ${ok?'good':'bad'}"><div class="h">${ok?'정답':'오답'} · ${ING_NAME[t]}</div><div class="exp">${ING_WHY[t]}</div></div>
+      <div class="acts"><span></span><div class="r"><button class="btn btn-pri" id="nx">${i===qs.length-1?'결과 보기':'다음'}</button></div></div>`;
+      $('#nx').onclick=()=>{if(i<qs.length-1){i++;draw();}else{setBest('ing',score,qs.length);result('STEP 03 · -ing 판별',score,qs.length,null,ingGame);}};
+    });
+  };
+  draw();scrollTop();
+}
+
+/* =========================================================
+   04 as 분류 스피드
+   ========================================================= */
+function asIntro(){
+  const b=prog.best.as;
+  app.innerHTML=head('STEP 04 · as 분류 스피드','60초 동안 as를 분류하세요')+
+  `<div class="card">
+   <div class="tw"><table class="t" style="min-width:0"><tr><th>구분</th><th>해석</th><th>단서</th></tr>
+   <tr><td>비례</td><td>~함에 따라</td><td>비교급, develop · grow · get · become</td></tr>
+   <tr><td>이유</td><td>~ 때문에</td><td>because로 바꿔도 자연스러움</td></tr>
+   <tr><td>시간</td><td>~할 때</td><td>when / while로 바꿔도 자연스러움</td></tr>
+   <tr><td>양태</td><td>~하듯이, ~대로</td><td>say · tell · predict · plan · advise</td></tr>
+   <tr><td>전치사</td><td>~로서</td><td>as 뒤에 명사만 옴</td></tr></table></div>
+   <p class="hintline">정답 +10점, 연속 정답 보너스. 틀린 문장은 끝난 뒤 해설과 함께 보여 드립니다.</p>
+   <div class="acts"><span class="stat">최고 기록 <b>${b?b.score+' / '+b.max:'-'}</b></span><div class="r"><button class="btn btn-pri" id="go">시작</button></div></div></div>`;
+  $('#go').onclick=asPlay;scrollTop();
+}
+function asPlay(){
+  let left=60,score=0,right=0,total=0,run=0,cur=null,alive=true;const missed=[];
+  let pool=shuffle(AS_SENT);
+  app.innerHTML=head('STEP 04 · as 분류 스피드','밑줄 친 as의 쓰임은?',`<span class="stat">점수 <b id="sc">0</b></span><span class="stat">정답 <b id="rt">0</b></span>`)+
+  `<div class="speed-top"><div class="timebar" id="tb"><div style="width:100%"></div></div><div class="tnum" id="tn">60s</div></div>
+   <div class="card speed-card" id="sc-card"><div class="sent" id="sent"></div>
+   <div class="choices c5">${AS_TYPES.map(([k,v,h])=>`<button class="ch" data-t="${k}">${v}<small>${h}</small></button>`).join('')}</div>
+   <div class="last" id="last"></div></div>`;
+  const next=()=>{if(!pool.length)pool=shuffle(AS_SENT);cur=pool.pop();$('#sent').innerHTML=cur[0];};
+  $$('.ch').forEach(b=>b.onclick=()=>{
+    if(!alive)return;total++;
+    const ok=b.dataset.t===cur[1];const card=$('#sc-card');
+    card.classList.remove('flash-ok','flash-no');void card.offsetWidth;card.classList.add(ok?'flash-ok':'flash-no');
+    const name=AS_TYPES.find(x=>x[0]===cur[1])[1];
+    if(ok){right++;run++;score+=10+Math.min(run-1,5)*2;$('#last').innerHTML=`<span class="ok-t">정답</span> · ${name}`;streak(run);}
+    else{run=0;missed.push(cur);$('#last').innerHTML=`<span class="no-t">오답</span> · 정답은 <b>${name}</b>`;}
+    $('#sc').textContent=score;$('#rt').textContent=right+' / '+total;
+    next();
+  });
+  next();
+  const t=setInterval(()=>{
+    if(!document.getElementById('tn')){clearInterval(t);alive=false;return;}
+    left--;$('#tn').textContent=left+'s';$('#tb div').style.width=(left/60*100)+'%';if(left<=10)$('#tb').classList.add('warn');
+    if(left<=0){clearInterval(t);alive=false;setBest('as',right,Math.max(total,1));
+      const rev=missed.length?`<div class="review" style="text-align:left">${missed.map(m=>`<div>${m[0].replace(/<\/?mark>/g,'')}<span>${AS_TYPES.find(x=>x[0]===m[1])[1]}</span></div>`).join('')}</div>`:'';
+      result('STEP 04 · as 분류 스피드',right,Math.max(total,1),score+'점 · 정답률 '+Math.round(right/Math.max(total,1)*100)+'%',asPlay,rev);}
+  },1000);
+  scrollTop();
+}
+
+/* =========================================================
+   05 문장 조립
+   ========================================================= */
+function blockGame(){
+  const qs=shuffle(BLOCKS).slice(0,8);let i=0,score=0;
+  const draw=()=>{
+    const q=qs[i];
+    const words=q.s.replace(/[,.]/g,'').split(' ');
+    const pool=shuffle(words.map((w,k)=>({w,k})));
+    let picked=[],checked=false;
+    const paint=()=>{
+      app.innerHTML=head('STEP 05 · 문장 조립','우리말에 맞게 배열하세요',`<span class="stat">정답 <b>${score}</b></span><span class="stat"><b>${i+1}</b> / ${qs.length}</span>`)+
+      `<div class="track"><div style="width:${i/qs.length*100}%"></div></div>
+      <div class="card"><div class="qtext">${esc(q.k)}</div>
+      <div class="zone" id="z">${picked.length?picked.map((p,j)=>`<button class="blk" data-j="${j}">${esc(p.w)}</button>`).join(''):'<span class="ph">아래 단어를 순서대로 눌러 주세요. 놓은 단어를 누르면 빠집니다.</span>'}</div>
+      <div class="pool">${pool.map(p=>`<button class="blk ${picked.includes(p)?'used':''}" data-k="${p.k}">${esc(p.w)}</button>`).join('')}</div>
+      <div id="fb"></div>
+      <div class="acts"><button class="btn btn-sec" id="rs">처음부터</button><div class="r"><button class="btn btn-pri" id="ck" ${picked.length===words.length||checked?'':'disabled'}>${checked?(i<qs.length-1?'다음':'결과 보기'):'확인'}</button></div></div></div>`;
+      $$('.pool .blk').forEach(b=>b.onclick=()=>{if(checked)return;const p=pool.find(x=>x.k==b.dataset.k);if(!picked.includes(p)){picked.push(p);paint();}});
+      $$('#z .blk').forEach(b=>b.onclick=()=>{if(checked)return;picked.splice(+b.dataset.j,1);paint();});
+      $('#rs').onclick=()=>{if(checked)return;picked=[];paint();};
+      $('#ck').onclick=()=>{
+        if(checked){if(i<qs.length-1){i++;draw();}else{setBest('block',score,qs.length);result('STEP 05 · 문장 조립',score,qs.length,null,blockGame);}return;}
+        checked=true;const ok=picked.map(p=>p.w).join(' ')===words.join(' ');if(ok)score++;
+        paint();
+        $('#fb').innerHTML=`<div class="fb ${ok?'good':'bad'}"><div class="h">${ok?'정답':'순서가 다릅니다'}</div><span class="a">${esc(q.s)}</span></div>`;
+      };
+    };
+    paint();
+  };
+  draw();scrollTop();
+}
+
+/* =========================================================
+   06 실전 50제
+   ========================================================= */
+let examSec='ALL';
+function exam(startIdx){
+  const list=EXAM.filter(q=>examSec==='ALL'||secOf(q.n)===examSec);
+  let idx=startIdx;
+  if(idx===undefined){const u=list.findIndex(q=>!prog.exam[q.n]);idx=u>=0?u:0;}
+  examDraw(list,idx,'exam');
+}
+function examWrong(){const list=EXAM.filter(q=>prog.wrong.includes(q.n));if(list.length)examDraw(list,0,'wrong');}
+function examDraw(list,idx,mode){
+  const q=list[idx];const isMC=!q.f;
+  const ok=Object.values(prog.exam).filter(v=>v==='ok').length,done=Object.keys(prog.exam).length;
+  app.innerHTML=head(mode==='wrong'?'오답노트':'STEP 06 · 실전 50제',mode==='wrong'?'틀린 문항 다시 풀기':SECS[secOf(q.n)],`<span class="stat">정답 <b>${ok}</b> / 50</span><span class="stat">풀이 <b>${done}</b></span>`)+
+  (mode==='exam'?`<div class="filters">${[['ALL','전체'],...Object.entries(SECS)].map(([k,v])=>`<button class="${examSec===k?'on':''}" data-s="${k}">${v}</button>`).join('')}</div>`:'')+
+  `<div class="grid">${list.map((x,j)=>`<button class="${prog.exam[x.n]||''} ${j===idx?'cur':''}" data-j="${j}">${x.n}</button>`).join('')}</div>
+  <div class="card">
+   <div class="qno">${String(q.n).padStart(2,'0')} <span class="tag">${isMC?'객관식':'서술형'}</span>${q.tag&&q.tag!=='서술형'?`<span class="tag gold">${q.tag}</span>`:''}</div>
+   <div class="qtext">${esc(q.q)}</div>
+   ${q.box?`<div class="qbox">${rich(q.box)}</div>`:''}
+   ${isMC?`<div class="opts">${q.o.map((o,k)=>`<button class="opt" data-k="${k}"><span class="m">${MARK[k]}</span><span>${rich(o)}</span></button>`).join('')}</div>`:
+     q.f.map((f,j)=>`<div class="fld"><label>${esc(f.l)}</label><div class="row"><input data-j="${j}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${f.self?'생각을 적어 보고 모범답안과 비교하세요':'답을 입력하세요'}"></div></div>`).join('')+'<p class="hintline">대소문자·문장부호는 채점에 영향을 주지 않습니다. (스스로 확인) 칸은 채점하지 않습니다.</p>'}
+   <div id="fb"></div>
+   <div class="acts"><button class="btn btn-sec" id="pv" ${idx?'':'disabled'}>이전</button><div class="r"><button class="btn btn-pri" id="sub">채점</button></div></div>
+  </div>`;
+  $$('.filters button').forEach(b=>b.onclick=()=>{examSec=b.dataset.s;exam();});
+  $$('.grid button').forEach(b=>b.onclick=()=>examDraw(list,+b.dataset.j,mode));
+  $('#pv').onclick=()=>examDraw(list,idx-1,mode);
+  let sel=null,checked=false;
+  $$('.opt').forEach(b=>b.onclick=()=>{if(checked)return;sel=+b.dataset.k;$$('.opt').forEach(x=>x.classList.toggle('sel',+x.dataset.k===sel));});
+  const ins=$$('.card input');ins.forEach(x=>x.addEventListener('keydown',e=>{if(e.key==='Enter')$('#sub').click();}));
+  $('#sub').onclick=()=>{
+    if(checked){
+      if(idx<list.length-1)examDraw(list,idx+1,mode);
+      else{const o2=Object.values(prog.exam).filter(v=>v==='ok').length;result(mode==='wrong'?'오답노트':'STEP 06 · 실전 50제',o2,50,'실전 50제 누적 정답',()=>exam(0),`<div class="pill">남은 오답 ${prog.wrong.length}문항</div>`);}
+      return;
+    }
+    let good;
+    if(isMC){
+      if(sel===null){toast('답을 골라 주세요');return;}
+      good=sel===q.a;
+      $$('.opt').forEach(x=>{const k=+x.dataset.k;x.disabled=true;x.classList.remove('sel');if(k===q.a)x.classList.add('correct');else if(k===sel)x.classList.add('wrong');});
+    }else{
+      const need=ins.filter((x,j)=>!q.f[j].self);
+      if(need.some(x=>!x.value.trim())){toast('답을 입력해 주세요');return;}
+      good=true;
+      ins.forEach((x,j)=>{const r=checkField(q.f[j],x.value);x.disabled=true;if(r===null)x.classList.add('self');else{x.classList.add(r?'ok':'no');if(!r)good=false;}});
+    }
+    checked=true;
+    prog.exam[q.n]=good?'ok':'no';
+    if(good)prog.wrong=prog.wrong.filter(n=>n!==q.n);else if(!prog.wrong.includes(q.n))prog.wrong.push(q.n);
+    save();
+    const ans=isMC?`${MARK[q.a]} ${esc(plain(q.o[q.a])).replace(/\n/g,' / ')}`:q.f.filter(f=>!f.self).map(f=>(q.f.length>1?esc(f.l)+' ':'')+esc(fieldAns(f))).join('<br>');
+    const selfs=isMC?'':q.f.filter(f=>f.self).map(f=>`<div class="self"><b>${esc(f.l.replace(' (스스로 확인)',''))} 모범답안</b><br>${esc(f.self)}</div>`).join('');
+    $('#fb').innerHTML=`<div class="fb ${good?'good':'bad'}"><div class="h">${good?'정답':'오답 · 오답노트에 저장했습니다'}</div>정답: <span class="a">${ans}</span><div class="exp">${esc(q.e)}</div>${selfs}</div>`;
+    $('#sub').textContent=idx<list.length-1?'다음 문항':'결과 보기';
+    const gb=app.querySelector(`.grid button[data-j="${idx}"]`);if(gb){gb.classList.remove('ok','no');gb.classList.add(good?'ok':'no');}
+  };
+  scrollTop();
+}
+
+home();
+</script>
+</body>
+</html>
